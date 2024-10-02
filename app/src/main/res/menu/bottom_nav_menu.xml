@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Home"
+        android:id="@+id/home"
+        android:icon="@drawable/ic_menu_home"/>
+    <item android:title="Wishlist"
+        android:id="@+id/wishlist"
+        android:icon="@drawable/ic_menu_wishlist"
+        />
+    <item android:title="Order"
+        android:id="@+id/order"
+        android:icon="@drawable/bag"/>
+    <item android:title="Account"
+        android:id="@+id/account"
+        android:icon="@drawable/profile"/>
+</menu>

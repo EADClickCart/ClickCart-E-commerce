@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">ClickCart</string>
+    <string name="login">Login</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="register">Register</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="name_hint">Name</string>
+    <string name="need_account">Need an account? Register here</string>
+    <string name="waiting_approval">Your account is pending approval. Please wait for some time.</string>
+    <string name="welcome">Welcome back to ClickCart</string>
+    <string name="forgot_password">Forgot Password</string>
+
+    <string name="welcome_text_2">Please enter the data to log in.</string>
+    <string name="register_text">Register Account</string>
+    <string name="register_text_2">Enter Email/password to register.</string>
+    <string name="have_account">Already have an account?</string>
+
+    <!--    account status-->
+    <string name="account_status_title">Account is creating</string>
+    <string name="account_status_title2">Your Account is in pending status. wait until CSR approve the account</string>
+    <string name="search_product_name">Search Product Name</string>
+
+    <!--    home page-->
+    <string name="cart">Cart</string>
+    <string name="notification">Notification</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
