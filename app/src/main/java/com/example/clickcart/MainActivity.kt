@@ -7,7 +7,7 @@ import com.example.clickcart.fragment.Account
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.clickcart.fragment.Home
 import com.example.clickcart.fragment.Order
-import com.example.clickcart.fragment.WishList
+import com.example.clickcart.fragment.Cart
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.wishlist -> {
-                    replaceFragment(WishList())
+                    replaceFragment(Cart())
                     true
                 }
                 R.id.order -> {

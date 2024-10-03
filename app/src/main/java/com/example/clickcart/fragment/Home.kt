@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.clickcart.ProductDetailActivity
 import com.example.clickcart.R
 import com.example.clickcart.SearchActivity
 import com.example.clickcart.adapters.CategoryAdapter
@@ -54,6 +55,14 @@ class Home : Fragment() {
         productAdapter = ProductAdapter()
         productsRecyclerView.adapter = productAdapter
         productsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        // Set product item click listener
+        productAdapter.setOnItemClickListener { product ->
+            // Open ProductDetailActivity when an item is clicked
+            val intent = Intent(requireContext(), ProductDetailActivity::class.java)
+            intent.putExtra("PRODUCT", product)
+            startActivity(intent)
+        }
 
         // Initialize searchBar and set click listener
         searchBar = view.findViewById(R.id.searchBar)
