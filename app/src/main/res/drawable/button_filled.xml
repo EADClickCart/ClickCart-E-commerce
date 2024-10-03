@@ -1,0 +1,5 @@
+<!-- res/drawable/button_filled.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/blue_1" />
+    <corners android:radius="8dp" />
+</shape>

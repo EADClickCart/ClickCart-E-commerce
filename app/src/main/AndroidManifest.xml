@@ -29,6 +29,8 @@
 
         <activity android:name=".AccountStatusActivity" />
         <activity android:name=".SearchActivity" />
+        <activity android:name=".ProductDetailActivity" />
+
 
     </application>
 

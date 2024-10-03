@@ -1,5 +1,7 @@
 package com.example.clickcart.models
 
+import java.io.Serializable
+
 data class Product(
     val id: String,
     val name: String,
@@ -9,4 +11,4 @@ data class Product(
     val isActive: Boolean,
     val isLowStock: Boolean,
     val lastUpdated: String
-)
+): Serializable

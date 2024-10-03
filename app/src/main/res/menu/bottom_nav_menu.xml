@@ -5,9 +5,9 @@
     <item android:title="Home"
         android:id="@+id/home"
         android:icon="@drawable/ic_menu_home"/>
-    <item android:title="Wishlist"
+    <item android:title="Cart"
         android:id="@+id/wishlist"
-        android:icon="@drawable/ic_menu_wishlist"
+        android:icon="@drawable/cart"
         />
     <item android:title="Order"
         android:id="@+id/order"
