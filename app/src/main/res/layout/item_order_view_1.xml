@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/orderImageView"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/completed"
+            android:contentDescription="@string/Image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/orderIdLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/arrowImageView"
+            app:layout_constraintStart_toEndOf="@+id/orderImageView"
+            app:layout_constraintTop_toTopOf="@+id/orderImageView">
+
+            <TextView
+                android:id="@+id/orderIdLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/order_id"
+                android:textSize="16sp"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:id="@+id/orderIdValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_order_id"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/orderDateLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/orderIdLayout"
+            app:layout_constraintStart_toStartOf="@+id/orderIdLayout"
+            app:layout_constraintTop_toBottomOf="@+id/orderIdLayout">
+
+            <TextView
+                android:id="@+id/orderDateLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/order_on"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:id="@+id/orderDateValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_date" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/itemsLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/orderDateLayout"
+            app:layout_constraintStart_toStartOf="@+id/orderDateLayout"
+            app:layout_constraintTop_toBottomOf="@+id/orderDateLayout">
+
+            <TextView
+                android:id="@+id/itemsLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@string/items" />
+
+            <TextView
+                android:id="@+id/itemsValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_number" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/arrowImageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/Image"
+            android:src="@drawable/forward_arrow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/orderIdLayout" />
+
+        <!-- Rest of the layout remains the same -->
+        <TextView
+            android:id="@+id/totalPriceLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/total_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/orderImageView" />
+
+        <TextView
+            android:id="@+id/totalPriceValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/sample_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/totalPriceLabelTextView" />
+
+        <TextView
+            android:id="@+id/statusLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/status"
+            app:layout_constraintStart_toStartOf="@+id/totalPriceLabelTextView"
+            app:layout_constraintTop_toBottomOf="@+id/totalPriceLabelTextView" />
+
+        <TextView
+            android:id="@+id/statusValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sample_status"
+            app:layout_constraintEnd_toEndOf="@+id/totalPriceValueTextView"
+            app:layout_constraintTop_toTopOf="@+id/statusLabelTextView" />
+
+        <Button
+            android:id="@+id/reportIssueButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_outline"
+            android:textColor="@color/black"
+            android:text="@string/report_issue"
+            app:layout_constraintEnd_toStartOf="@+id/reorderButton"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusLabelTextView" />
+
+        <Button
+            android:id="@+id/reorderButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/button_filled"
+            android:text="@string/reorder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reportIssueButton"
+            app:layout_constraintTop_toTopOf="@+id/reportIssueButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
