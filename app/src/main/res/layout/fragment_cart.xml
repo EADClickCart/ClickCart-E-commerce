@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Cart"
+            android:text="@string/cart"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Your Cart is Empty"
+        android:text="@string/your_cart_is_empty"
         android:textColor="@color/blue_1"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -54,7 +54,7 @@
         android:layout_marginHorizontal="60dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="Looks like you haven't added any items to your cart yet."
+        android:text="@string/cart_empty_error_msg_para"
         android:textColor="@color/gray"
         android:textSize="14sp"
         android:textStyle="normal"
@@ -63,6 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/noItemsTextView" />
 
+    <!-- item_cart.xml file is for this recycler item view -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
@@ -95,9 +96,9 @@
 
         <TextView
             android:id="@+id/cartTotalLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Total"
+            android:text="@string/total"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_weight="1"/>
@@ -106,7 +107,7 @@
             android:id="@+id/cartTotalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$0.00"
+            android:text="@string/sample_price"
             android:textSize="16sp"
             android:textStyle="bold"
              />
@@ -130,7 +131,7 @@
             android:id="@+id/continueShoppingButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Continue Shopping"
+            android:text="@string/continue_shopping"
             android:textColor="@color/black"
             android:backgroundTint="@color/white"
             android:layout_marginEnd="16dp"
@@ -140,9 +141,9 @@
         <!-- Button to proceed to checkout -->
         <Button
             android:id="@+id/checkoutButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Checkout"
+            android:text="@string/checkout"
             android:background="@drawable/button_filled"
             android:textColor="@android:color/white"
             android:layout_weight="1" />
