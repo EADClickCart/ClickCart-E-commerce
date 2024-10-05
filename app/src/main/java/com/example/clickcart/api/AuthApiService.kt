@@ -1,11 +1,13 @@
 package com.example.clickcart.api
 
+import com.example.clickcart.data.LoginRequest
+import com.example.clickcart.data.LoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-data class LoginRequest(val email: String, val password: String)
-data class LoginResponse(val token: String)
+
+
 
 interface AuthApiService {
     @POST("/api/User/login")

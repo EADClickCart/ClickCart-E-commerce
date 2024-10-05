@@ -9,8 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.clickcart.api.AuthApiService
-import com.example.clickcart.api.LoginRequest
-import com.example.clickcart.api.LoginResponse
+import com.example.clickcart.data.LoginRequest
+import com.example.clickcart.data.LoginResponse
 import com.example.clickcart.api.RetrofitClient
 import com.example.clickcart.utils.TokenManager
 import retrofit2.Call
