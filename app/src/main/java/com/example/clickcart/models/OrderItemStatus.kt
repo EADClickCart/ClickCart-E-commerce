@@ -1,4 +1,5 @@
 package com.example.clickcart.models
 
-class OrderItemStatus {
+enum class OrderItemStatus {
+    PENDING, SHIPPED, DELIVERED, CANCELLED
 }
