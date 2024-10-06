@@ -58,27 +58,32 @@ class LoginActivity : AppCompatActivity() {
         authService.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
-                    val token = response.body()?.token
-                    if (token != null) {
-                        Log.d("Token", "Token received: $token")
-                        TokenManager.saveToken(token) // Save the token in shared preferences
+                    response.body()?.let { loginResponse ->
+                        Log.d("Token", "Token received: ${loginResponse.token}")
+                        TokenManager.saveToken(loginResponse.token)
 
                         val userRole = TokenManager.getUserRole()
-                        Log.d("User Role", "User Role: $userRole")
-
-                        // Log the user ID after saving the token
                         val userId = TokenManager.getUserId()
+                        Log.d("User Role", "User Role: $userRole")
                         Log.d("User ID", "User ID: $userId")
 
-                        if(userRole =="Customer"){
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }else{
-                            Toast.makeText(this@LoginActivity, "Not Valid user", Toast.LENGTH_SHORT).show()
+                        when {
+                            userRole != "Customer" -> {
+                                Toast.makeText(this@LoginActivity, "Not a valid user", Toast.LENGTH_SHORT).show()
+                            }
+                            !loginResponse.isActive -> {
+                                // Redirect to AccountStatusActivity if account is not active
+                                val intent = Intent(this@LoginActivity, AccountStatusActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            else -> {
+                                // Account is active and role is Customer, proceed to MainActivity
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
                         }
-
-
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, "Login failed", Toast.LENGTH_SHORT).show()

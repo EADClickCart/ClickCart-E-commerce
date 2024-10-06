@@ -1,16 +1,18 @@
+// File: app/src/main/java/com/example/clickcart/utils/TokenManager.kt
+
 package com.example.clickcart.utils
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
+import android.util.Log
 import org.json.JSONObject
+import java.nio.charset.StandardCharsets
 
 object TokenManager {
-    private const val PREF_NAME = "userPrefs"
-    private const val TOKEN_KEY = "userToken"
-    private const val USER_ID_KEY = "userId"
-    private const val USER_ROLE_KEY = "userRole"
-
+    private const val PREF_NAME = "TokenPrefs"
+    private const val KEY_TOKEN = "token"
+    private const val KEY_IS_ACTIVE = "is_active"
     private lateinit var sharedPreferences: SharedPreferences
 
     fun init(context: Context) {
@@ -18,52 +20,71 @@ object TokenManager {
     }
 
     fun saveToken(token: String) {
-        sharedPreferences.edit().putString(TOKEN_KEY, token).apply()
-        // Decode the token and extract user ID and role
-        val tokenInfo = extractInfoFromToken(token)
-        tokenInfo.userId?.let { saveUserId(it) }
-        tokenInfo.userRole?.let { saveUserRole(it) }
+        sharedPreferences.edit().putString(KEY_TOKEN, token).apply()
     }
 
-    private fun extractInfoFromToken(token: String): TokenInfo {
-        return try {
-            val payload = token.split(".")[1]
-            val decodedBytes = Base64.decode(payload, Base64.URL_SAFE)
-            val decodedPayload = String(decodedBytes)
-            val jsonObject = JSONObject(decodedPayload)
-            TokenInfo(
-                userId = jsonObject.optString("nameid"),
-                userRole = jsonObject.optString("role")
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            TokenInfo(null, null)
-        }
-    }
-
-    private fun saveUserId(userId: String) {
-        sharedPreferences.edit().putString(USER_ID_KEY, userId).apply()
-    }
-
-    private fun saveUserRole(userRole: String) {
-        sharedPreferences.edit().putString(USER_ROLE_KEY, userRole).apply()
+    fun saveIsActive(isActive: Boolean) {
+        sharedPreferences.edit().putBoolean(KEY_IS_ACTIVE, isActive).apply()
     }
 
     fun getToken(): String? {
-        return sharedPreferences.getString(TOKEN_KEY, null)
+        return sharedPreferences.getString(KEY_TOKEN, null)
+    }
+
+    fun getIsActive(): Boolean {
+        return sharedPreferences.getBoolean(KEY_IS_ACTIVE, false)
+    }
+
+    fun getUserRole(): String {
+        val token = getToken()
+        return try {
+            val payload = decodeTokenPayload(token)
+            payload.getString("role")
+        } catch (e: Exception) {
+            Log.e("TokenManager", "Error getting user role", e)
+            ""
+        }
     }
 
     fun getUserId(): String? {
-        return sharedPreferences.getString(USER_ID_KEY, null)
+        val token = getToken()
+        return try {
+            val payload = decodeTokenPayload(token)
+            payload.getString("nameid")
+        } catch (e: Exception) {
+            Log.e("TokenManager", "Error getting user ID", e)
+            null
+        }
     }
 
-    fun getUserRole(): String? {
-        return sharedPreferences.getString(USER_ROLE_KEY, null)
+    private fun decodeTokenPayload(token: String?): JSONObject {
+        if (token == null) throw IllegalArgumentException("Token is null")
+
+        val parts = token.split(".")
+        if (parts.size != 3) throw IllegalArgumentException("Invalid token format")
+
+        val payload = parts[1]
+        val decodedBytes = Base64.decode(payload, Base64.URL_SAFE)
+        val decodedString = String(decodedBytes, StandardCharsets.UTF_8)
+
+        return JSONObject(decodedString)
     }
 
     fun clearToken() {
-        sharedPreferences.edit().clear().apply()
+        sharedPreferences.edit()
+            .remove(KEY_TOKEN)
+            .remove(KEY_IS_ACTIVE)
+            .apply()
     }
 
-    data class TokenInfo(val userId: String?, val userRole: String?)
+    fun getUserEmail(): String {
+        val token = getToken()
+        return try {
+            val payload = decodeTokenPayload(token)
+            payload.getString("email")
+        } catch (e: Exception) {
+            Log.e("TokenManager", "Error getting user email", e)
+            ""
+        }
+    }
 }
