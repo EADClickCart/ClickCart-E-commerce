@@ -17,76 +17,56 @@ import com.example.clickcart.adapters.CategoryAdapter
 import com.example.clickcart.adapters.ProductAdapter
 import com.example.clickcart.api.CategoryApiService
 import com.example.clickcart.api.ProductApiService
+import com.example.clickcart.api.RetrofitClient
 import com.example.clickcart.models.Category
 import com.example.clickcart.models.Product
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class Home : Fragment() {
 
-    // For categories
     private lateinit var categoriesRecyclerView: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
-
-    // For products
     private lateinit var productsRecyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
-
-    private lateinit var searchBar: TextView  // Declare the searchBar
+    private lateinit var searchBar: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        // Initialize RecyclerView for categories
         categoriesRecyclerView = view.findViewById(R.id.categoriesRecyclerView)
         categoryAdapter = CategoryAdapter()
         categoriesRecyclerView.adapter = categoryAdapter
         categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        // Initialize RecyclerView for products
         productsRecyclerView = view.findViewById(R.id.featuredProductsRecyclerView)
         productAdapter = ProductAdapter()
         productsRecyclerView.adapter = productAdapter
         productsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        // Set product item click listener
         productAdapter.setOnItemClickListener { product ->
-            // Open ProductDetailActivity when an item is clicked
             val intent = Intent(requireContext(), ProductDetailActivity::class.java)
             intent.putExtra("PRODUCT", product)
             startActivity(intent)
         }
 
-        // Initialize searchBar and set click listener
         searchBar = view.findViewById(R.id.searchBar)
         searchBar.setOnClickListener {
-            // Open the search activity
             openSearchScreen()
         }
 
-        // Fetch categories
         fetchCategories()
-
-        // Fetch products
         fetchProducts()
 
         return view
     }
 
     private fun fetchCategories() {
-        // Use Retrofit to fetch categories from your API
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5296/")  // Use this for emulator, replace with actual URL
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
+        val retrofit = RetrofitClient.create()
         val service = retrofit.create(CategoryApiService::class.java)
         val call = service.getCategories()
 
@@ -109,12 +89,7 @@ class Home : Fragment() {
     }
 
     private fun fetchProducts() {
-        // Use Retrofit to fetch products from your API
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5296/")  // Use this for emulator, replace with actual URL
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
+        val retrofit = RetrofitClient.create()
         val service = retrofit.create(ProductApiService::class.java)
         val call = service.getProducts()
 
@@ -136,7 +111,6 @@ class Home : Fragment() {
         })
     }
 
-    // Method to open the search screen
     private fun openSearchScreen() {
         val intent = Intent(requireContext(), SearchActivity::class.java)
         startActivity(intent)

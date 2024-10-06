@@ -15,9 +15,9 @@ class AccountStatusActivity : AppCompatActivity() {
         // Delay of 2 seconds (2000 milliseconds)
         Handler(Looper.getMainLooper()).postDelayed({
             // Start HomeActivity
-            val intent = Intent(this@AccountStatusActivity, Home::class.java)
+            val intent = Intent(this@AccountStatusActivity, LoginActivity::class.java)
             startActivity(intent)
             finish() // Optional: Close the current activity so that user cannot come back here
-        }, 2000) // Delay in milliseconds (2 seconds)
+        }, 10000) // Delay in milliseconds (2 seconds)
     }
 }
