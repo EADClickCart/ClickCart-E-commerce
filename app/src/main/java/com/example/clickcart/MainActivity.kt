@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.fragment_container, Home())
                     .commit()
             }
+            if (intent.getBooleanExtra("SHOW_HOME", false)) {
+                showHomeFragment()
+            }
 
             // Set up bottom navigation
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -66,6 +69,12 @@ class MainActivity : AppCompatActivity() {
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun showHomeFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, Home())
             .commit()
     }
 }

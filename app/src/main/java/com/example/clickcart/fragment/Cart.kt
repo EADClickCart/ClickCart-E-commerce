@@ -87,15 +87,21 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
 
     private fun setupButtons() {
         binding.continueShoppingButton.setOnClickListener {
-            // Navigate to the Home screen using an Intent
-            val intent = Intent(requireActivity(), MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            startActivity(intent)
+            navigateToHome()
         }
 
         binding.checkoutButton.setOnClickListener {
             createOrder()
         }
+    }
+
+    private fun navigateToHome() {
+        val homeFragment = Home()
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, homeFragment)
+            .addToBackStack(null) 
+            .commit()
     }
 
 
@@ -195,7 +201,7 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
             })
         }
 
-        val order = com.example.clickcart.models.Order(
+        val order = Order(
             customerId = uid,
             customerName = username,
             orderItems = orderItems,
