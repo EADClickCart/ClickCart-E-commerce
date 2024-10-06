@@ -63,13 +63,22 @@ class LoginActivity : AppCompatActivity() {
                         Log.d("Token", "Token received: $token")
                         TokenManager.saveToken(token) // Save the token in shared preferences
 
+                        val userRole = TokenManager.getUserRole()
+                        Log.d("User Role", "User Role: $userRole")
+
                         // Log the user ID after saving the token
                         val userId = TokenManager.getUserId()
                         Log.d("User ID", "User ID: $userId")
 
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        if(userRole =="Customer"){
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }else{
+                            Toast.makeText(this@LoginActivity, "Not Valid user", Toast.LENGTH_SHORT).show()
+                        }
+
+
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, "Login failed", Toast.LENGTH_SHORT).show()

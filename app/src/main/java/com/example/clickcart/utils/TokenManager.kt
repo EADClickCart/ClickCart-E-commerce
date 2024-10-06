@@ -9,6 +9,7 @@ object TokenManager {
     private const val PREF_NAME = "userPrefs"
     private const val TOKEN_KEY = "userToken"
     private const val USER_ID_KEY = "userId"
+    private const val USER_ROLE_KEY = "userRole"
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -18,28 +19,34 @@ object TokenManager {
 
     fun saveToken(token: String) {
         sharedPreferences.edit().putString(TOKEN_KEY, token).apply()
-        // Decode the token and extract user ID
-        val userId = extractUserIdFromToken(token)
-        saveUserId(userId)
+        // Decode the token and extract user ID and role
+        val tokenInfo = extractInfoFromToken(token)
+        tokenInfo.userId?.let { saveUserId(it) }
+        tokenInfo.userRole?.let { saveUserRole(it) }
     }
 
-    private fun extractUserIdFromToken(token: String): String? {
+    private fun extractInfoFromToken(token: String): TokenInfo {
         return try {
             val payload = token.split(".")[1]
             val decodedBytes = Base64.decode(payload, Base64.URL_SAFE)
             val decodedPayload = String(decodedBytes)
             val jsonObject = JSONObject(decodedPayload)
-            jsonObject.optString("nameid") // Adjust according to your JWT payload structure
+            TokenInfo(
+                userId = jsonObject.optString("nameid"),
+                userRole = jsonObject.optString("role")
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-            null
+            TokenInfo(null, null)
         }
     }
 
-    private fun saveUserId(userId: String?) {
-        userId?.let {
-            sharedPreferences.edit().putString(USER_ID_KEY, it).apply()
-        }
+    private fun saveUserId(userId: String) {
+        sharedPreferences.edit().putString(USER_ID_KEY, userId).apply()
+    }
+
+    private fun saveUserRole(userRole: String) {
+        sharedPreferences.edit().putString(USER_ROLE_KEY, userRole).apply()
     }
 
     fun getToken(): String? {
@@ -50,7 +57,13 @@ object TokenManager {
         return sharedPreferences.getString(USER_ID_KEY, null)
     }
 
+    fun getUserRole(): String? {
+        return sharedPreferences.getString(USER_ROLE_KEY, null)
+    }
+
     fun clearToken() {
         sharedPreferences.edit().clear().apply()
     }
+
+    data class TokenInfo(val userId: String?, val userRole: String?)
 }

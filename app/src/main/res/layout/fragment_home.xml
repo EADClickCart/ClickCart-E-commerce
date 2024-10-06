@@ -65,11 +65,11 @@
                 android:hint="@string/search_product_name"
                 android:padding="20dp"
                 android:background="@drawable/rounded_edit_text"
-                android:drawableEnd="@drawable/search" />
+                app:drawableEndCompat="@drawable/search" />
 
             <!-- Promotional banner -->
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="8dp">
@@ -85,21 +85,24 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="150dp"
-                            android:layout_marginRight="20dp"
+                            android:layout_marginEnd="15dp"
+                            android:contentDescription="@string/Image"
                             android:scaleType="centerCrop"
                             android:src="@drawable/ban1"
                             android:background="@android:color/transparent"/>
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="150dp"
-                            android:layout_marginRight="20dp"
+                            android:layout_marginEnd="15dp"
+                            android:contentDescription="@string/Image"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ban1" />
+                            android:src="@drawable/ban2" />
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="150dp"
+                            android:contentDescription="@string/Image"
                             android:scaleType="centerCrop"
                             android:src="@drawable/ban1" />
                     </LinearLayout>
@@ -117,9 +120,9 @@
                     android:id="@+id/forget_password"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Categories"
+                    android:text="@string/categories"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -129,7 +132,7 @@
                     android:layout_marginStart="244dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:text="See All"
+                    android:text="@string/see_all"
                     android:textColor="@color/blue_1"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -152,9 +155,9 @@
                     android:id="@+id/featuredproducts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Featured Products"
+                    android:text="@string/featured_products"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/seeallforfeaturedproducts"
@@ -163,7 +166,7 @@
                     android:layout_marginStart="190dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:text="See All"
+                    android:text="@string/see_all"
                     android:textColor="@color/blue_1"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -175,6 +178,15 @@
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="20dp"
+                android:contentDescription="@string/Image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ban3"
+                android:background="@android:color/transparent"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
