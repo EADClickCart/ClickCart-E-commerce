@@ -9,6 +9,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
@@ -19,4 +20,7 @@ interface UserApiService {
 
     @POST("api/User/register")
     suspend fun registerUser(@Body request: RegisterRequest): Response<ResponseBody>
+
+    @PUT("api/User/{id}/update")
+    fun updateUserDetails(@Path("id") userId: String, @Body updateBody: Map<String, String>): Call<Unit>
 }

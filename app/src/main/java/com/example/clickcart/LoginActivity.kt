@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                     response.body()?.let { loginResponse ->
                         Log.d("Token", "Token received: ${loginResponse.token}")
                         TokenManager.saveToken(loginResponse.token)
+                        TokenManager.saveIsActive(loginResponse.isActive)  // Save isActive status
 
                         val userRole = TokenManager.getUserRole()
                         val userId = TokenManager.getUserId()

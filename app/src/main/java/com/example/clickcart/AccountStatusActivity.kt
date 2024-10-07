@@ -18,6 +18,6 @@ class AccountStatusActivity : AppCompatActivity() {
             val intent = Intent(this@AccountStatusActivity, LoginActivity::class.java)
             startActivity(intent)
             finish() // Optional: Close the current activity so that user cannot come back here
-        }, 10000) // Delay in milliseconds (2 seconds)
+        }, 8000) // Delay in milliseconds (2 seconds)
     }
 }

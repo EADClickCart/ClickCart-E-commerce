@@ -82,4 +82,7 @@
     <string name="see_all">See All</string>
     <string name="featured_products">Featured Products</string>
     <string name="search">Search</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_your_name_and_email">Change your name and email</string>
+    <string name="save">Save</string>
 </resources>
