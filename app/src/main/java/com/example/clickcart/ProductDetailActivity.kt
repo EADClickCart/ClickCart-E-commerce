@@ -8,14 +8,20 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.example.clickcart.models.Product
 import com.example.clickcart.models.CartItem
 import com.example.clickcart.fragment.Cart
+import com.example.clickcart.data.VendorDataManager
+import kotlinx.coroutines.launch
 
 class ProductDetailActivity : AppCompatActivity() {
 
     private lateinit var product: Product
     private lateinit var addToCartButton: Button
+    private lateinit var vendorName: TextView
+    private lateinit var vendorId: TextView
+    private lateinit var vendorRating: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,45 +30,64 @@ class ProductDetailActivity : AppCompatActivity() {
         // Initialize the toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        // Remove the app name from the toolbar
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // Enable the back button
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // Handle the navigation click
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Handle physical back button with OnBackPressedDispatcher
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 finish()
             }
         })
 
-        // Get the product from the intent
         product = intent.getSerializableExtra("PRODUCT") as Product
 
-        // Bind views
+        initializeViews()
+        setupAddToCartButton()
+        loadVendorDetails()
+    }
+
+    private fun initializeViews() {
+        // Existing views
         val productNameDetail: TextView = findViewById(R.id.productNameDetail)
         val productDescriptionDetail: TextView = findViewById(R.id.productDescriptionDetail)
         val productPriceDetail: TextView = findViewById(R.id.productPriceDetail)
         val productImageView: ImageView = findViewById(R.id.imageView)
         addToCartButton = findViewById(R.id.addToCartButton)
 
-        // Set the product details in the views
+        // New vendor-related views
+        vendorName = findViewById(R.id.store_name)
+        vendorId = findViewById(R.id.store_status)
+        vendorRating = findViewById(R.id.rating)  // Initialize this line
+
+        // Set the product details
         productNameDetail.text = product.name
         productDescriptionDetail.text = product.description
         productPriceDetail.text = "$${product.price}"
-
-        // Set a common image for now
         productImageView.setImageResource(R.drawable.product_img)
 
-        // Setup Add to Cart button
-        setupAddToCartButton()
+        // Initialize vendor views with loading state
+        vendorName.text = "Loading..."
+        vendorId.text = product.vendorId
+        vendorRating.text = "..."  // This will now work correctly
+    }
+
+    private fun loadVendorDetails() {
+        lifecycleScope.launch {
+            try {
+                val vendor = VendorDataManager.getVendorDetails(product.vendorId)
+                vendorName.text = vendor.name
+
+                val rating = VendorDataManager.getVendorRating(product.vendorId)
+                vendorRating.text = String.format("%.1f", rating)
+            } catch (e: Exception) {
+                vendorName.text = "Unknown Vendor"
+                vendorRating.text = "N/A"
+                Toast.makeText(this@ProductDetailActivity, "Failed to load vendor details", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupAddToCartButton() {
@@ -71,19 +96,14 @@ class ProductDetailActivity : AppCompatActivity() {
                 productId = product.id,
                 productName = product.name,
                 productPrice = product.price,
-                quantity = 1 // You can add quantity selection in the product detail page if needed
+                quantity = 1
             )
-
-            // Add to cart
             addToCart(cartItem)
-
-            // Show a confirmation message
             Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun addToCart(cartItem: CartItem) {
         Cart.addToCart(cartItem)
-        // You might want to add some way to notify the Cart fragment to update its view
     }
 }

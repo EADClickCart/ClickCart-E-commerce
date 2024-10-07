@@ -85,4 +85,8 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="change_your_name_and_email">Change your name and email</string>
     <string name="save">Save</string>
+    <string name="detail_product">Detail Product</string>
+    <string name="official_store">Official Store</string>
+    <string name="add_to_wishlist">Add to Wishlist</string>
+    <string name="add_to_cart">Add to Cart</string>
 </resources>

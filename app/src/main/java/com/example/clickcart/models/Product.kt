@@ -9,6 +9,7 @@ data class Product(
     val price: Double,
     val stock: Int,
     val isActive: Boolean,
+    val vendorId: String,
     val isLowStock: Boolean,
     val lastUpdated: String
 ): Serializable
