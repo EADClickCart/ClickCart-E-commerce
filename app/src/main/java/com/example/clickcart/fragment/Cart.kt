@@ -1,8 +1,8 @@
 package com.example.clickcart.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.UserManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,13 +21,12 @@ import com.example.clickcart.models.OrderItemStatus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.navigation.fragment.findNavController
 import com.example.clickcart.MainActivity
-import com.example.clickcart.api.UserApiService
-import com.example.clickcart.data.UserResponse
 import com.example.clickcart.models.OrderStatus
 import com.example.clickcart.models.Order
 import com.example.clickcart.utils.TokenManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
     private var _binding: FragmentCartBinding? = null
@@ -46,6 +45,7 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadCartFromLocalStorage()
         setupRecyclerView()
         updateCartContent()
         setupButtons()
@@ -65,6 +65,19 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
         updateCartVisibility(currentCartItems)
         updateCartSummary(currentCartItems)
     }
+
+    private fun loadCartFromLocalStorage() {
+        val sharedPreferences = requireContext().getSharedPreferences("cart_preferences", Context.MODE_PRIVATE)
+        val cartJson = sharedPreferences.getString("cart_items", null)
+
+        if (cartJson != null) {
+            val itemType = object : TypeToken<MutableList<CartItem>>() {}.type
+            val loadedCartItems: MutableList<CartItem> = Gson().fromJson(cartJson, itemType)
+            cartItems.clear()
+            cartItems.addAll(loadedCartItems)
+        }
+    }
+
 
     private fun updateCartVisibility(items: List<CartItem>) {
         if (items.isEmpty()) {
@@ -108,9 +121,10 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
 
 
     override fun onQuantityChanged(item: CartItem, newQuantity: Int) {
-        updateItemQuantity(item.productId, newQuantity)
+        updateItemQuantity(item.productId, newQuantity, requireContext())
         updateCartSummary(getCartItems())
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -126,40 +140,49 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
         private val cartItems = mutableListOf<CartItem>()
 
         @JvmStatic
-        fun addToCart(item: CartItem) {
+        fun addToCart(item: CartItem, context: Context) {
+            val sharedPreferences = context.getSharedPreferences("cart_preferences", Context.MODE_PRIVATE)
             val existingItem = cartItems.find { it.productId == item.productId }
             if (existingItem != null) {
                 existingItem.quantity += item.quantity
             } else {
                 cartItems.add(item)
             }
+            saveCartToLocalStorage(context)
         }
 
         @JvmStatic
         fun getCartItems(): List<CartItem> = cartItems.toList()
 
         @JvmStatic
-        fun clearCart() {
+        fun clearCart(context: Context) {
             cartItems.clear()
+            saveCartToLocalStorage(context)
         }
 
         @JvmStatic
-        fun updateItemQuantity(productId: String, newQuantity: Int) {
+        fun updateItemQuantity(productId: String, newQuantity: Int, context: Context) {
             cartItems.find { it.productId == productId }?.let { item ->
                 item.quantity = newQuantity
                 if (item.quantity <= 0) {
                     cartItems.remove(item)
                 }
+                saveCartToLocalStorage(context)
             }
+        }
+
+        @JvmStatic
+        private fun saveCartToLocalStorage(context: Context) {
+            val sharedPreferences = context.getSharedPreferences("cart_preferences", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+
+            val cartJson = Gson().toJson(cartItems)
+            editor.putString("cart_items", cartJson)
+            editor.apply()
         }
     }
 
     private fun createOrder() {
-//        val currentUser = UserManager.getCurrentUser()
-//        if (currentUser == null) {
-//            Toast.makeText(context, "Please log in to place an order", Toast.LENGTH_SHORT).show()
-//            return
-//        }
 
         val cartItems = getCartItems()
         if (cartItems.isEmpty()) {
@@ -170,47 +193,24 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
         val orderItems = cartItems.map { cartItem ->
             OrderItem(
                 productId = cartItem.productId,
-//                productName = cartItem.productName,
+                productName = cartItem.productName,
                 quantity = cartItem.quantity,
                 price = cartItem.productPrice,
                 totalPrice = cartItem.productPrice * cartItem.quantity,
-//                status = OrderItemStatus.PENDING
+                status = OrderItemStatus.PURCHASED.toString(),
+                vendorId = cartItem.vendorId,
+                vendorName = cartItem.vendorName
             )
         }
 
         val totalPrice = orderItems.sumOf { it.totalPrice }
-        var username = "";
-        var uid = "";
-//        var userId: String? = null
         val userId = TokenManager.getUserId()
-            val service = RetrofitClient.create().create(UserApiService::class.java)
-        if (userId != null) {
-            service.getUserDetails(userId).enqueue(object : Callback<UserResponse> {
-                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { userDetails ->
-                            username = userDetails.name
-                            uid = userDetails.id
-                        } ?: run {
-                            Toast.makeText(requireContext(), "User details not found", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Error fetching user details", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Network error getUserDetails: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
 
 
         val order = Order(
             customerId = userId.toString(),
-//            customerName = username,
             items = orderItems,
-            status = OrderStatus.PENDING.toString(),
+            orderStatus = OrderStatus.PURCHASED.toString(),
             totalOrderPrice = totalPrice
         )
         Log.e("OrderApiService", "Order object: $order")
@@ -221,16 +221,16 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
                     val responseBody = response.body()
                     Log.d("OrderApiService", "Response Body: $responseBody")
 
-                    // Order created successfully
-                    clearCart()
+                    clearCart(requireContext())
                     Toast.makeText(context, "Order placed successfully", Toast.LENGTH_SHORT).show()
 
-                    // Navigate to the Home screen
+                    val sharedPreferences = requireContext().getSharedPreferences("cart_preferences", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().clear().apply()
+                    
                     val intent = Intent(requireActivity(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                 } else {
-                    // Log the error response body for debugging
                     Log.e("OrderApiService", "Error Response: ${response.errorBody()?.string()}")
                     Toast.makeText(context, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
                 }

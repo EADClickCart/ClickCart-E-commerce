@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -31,6 +32,7 @@ class Home : Fragment() {
     private lateinit var productsRecyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private lateinit var searchBar: TextView
+    private lateinit var cartIcon: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +59,11 @@ class Home : Fragment() {
         searchBar = view.findViewById(R.id.searchBar)
         searchBar.setOnClickListener {
             openSearchScreen()
+        }
+
+        cartIcon = view.findViewById(R.id.cartIcon)
+        cartIcon.setOnClickListener {
+            navigateToCart(Cart())
         }
 
         fetchCategories()
@@ -114,5 +121,12 @@ class Home : Fragment() {
     private fun openSearchScreen() {
         val intent = Intent(requireContext(), SearchActivity::class.java)
         startActivity(intent)
+    }
+
+
+    private fun navigateToCart(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }

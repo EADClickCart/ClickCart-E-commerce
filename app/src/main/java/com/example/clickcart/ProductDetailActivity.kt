@@ -27,7 +27,6 @@ class ProductDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_detail)
 
-        // Initialize the toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -50,28 +49,24 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun initializeViews() {
-        // Existing views
         val productNameDetail: TextView = findViewById(R.id.productNameDetail)
         val productDescriptionDetail: TextView = findViewById(R.id.productDescriptionDetail)
         val productPriceDetail: TextView = findViewById(R.id.productPriceDetail)
         val productImageView: ImageView = findViewById(R.id.imageView)
         addToCartButton = findViewById(R.id.addToCartButton)
 
-        // New vendor-related views
         vendorName = findViewById(R.id.store_name)
         vendorId = findViewById(R.id.store_status)
-        vendorRating = findViewById(R.id.rating)  // Initialize this line
+        vendorRating = findViewById(R.id.rating)
 
-        // Set the product details
         productNameDetail.text = product.name
         productDescriptionDetail.text = product.description
         productPriceDetail.text = "$${product.price}"
         productImageView.setImageResource(R.drawable.product_img)
 
-        // Initialize vendor views with loading state
         vendorName.text = "Loading..."
         vendorId.text = product.vendorId
-        vendorRating.text = "..."  // This will now work correctly
+        vendorRating.text = "..."
     }
 
     private fun loadVendorDetails() {
@@ -96,7 +91,9 @@ class ProductDetailActivity : AppCompatActivity() {
                 productId = product.id,
                 productName = product.name,
                 productPrice = product.price,
-                quantity = 1
+                quantity = 1,
+                vendorId = product.vendorId,
+                vendorName = vendorName.text.toString()
             )
             addToCart(cartItem)
             Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
@@ -104,6 +101,6 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun addToCart(cartItem: CartItem) {
-        Cart.addToCart(cartItem)
+        Cart.addToCart(cartItem, this)
     }
 }

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clickcart.R
 import com.example.clickcart.adapter.OrderAdapter
 import com.example.clickcart.api.OrderApiService
-import com.example.clickcart.api.ProductApiService
 import com.example.clickcart.api.RetrofitClient
 import com.example.clickcart.databinding.FragmentOrderBinding
 import com.example.clickcart.utils.TokenManager
@@ -20,15 +19,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.clickcart.models.Order
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Order.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Order : Fragment() {
     private lateinit var binding: FragmentOrderBinding
     private lateinit var orderAdapter: OrderAdapter
@@ -58,11 +48,22 @@ class Order : Fragment() {
             onReportIssueClick = { order ->
                 Toast.makeText(context, "Reporting issue for ${order.id}", Toast.LENGTH_SHORT).show()
             },
+            onArrowClick = { order ->
+                navigateToOrderDetails(order.id.toString())
+            }
         )
         binding.cartRecyclerView.apply {
             adapter = orderAdapter
             layoutManager = LinearLayoutManager(context)
         }
+    }
+
+    private fun navigateToOrderDetails(orderId: String) {
+        val orderDetailsFragment = OrderDetailsFragment.newInstance(orderId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, orderDetailsFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun fetchOrders() {
@@ -72,21 +73,17 @@ class Order : Fragment() {
                 override fun onResponse(call: Call<List<Order>>, response: Response<List<Order>>) {
                     if (response.isSuccessful) {
                         val orders = response.body()
-                        val responseBody = response.body()
-                        Log.d("OrderApiService", "Response Body: $responseBody")
                         if (orders.isNullOrEmpty()) {
                             showEmptyState()
                         } else {
                             showOrders(orders)
                         }
                     } else {
-                        // Handle error
                         showEmptyState()
                     }
                 }
 
                 override fun onFailure(call: Call<List<Order>>, t: Throwable) {
-                    // Handle network error
                     Log.e("OrderApiService", "Network error: ${t.message}", t)
                     showEmptyState()
                 }
@@ -111,4 +108,3 @@ class Order : Fragment() {
         orderAdapter.submitList(orders)
     }
 }
-

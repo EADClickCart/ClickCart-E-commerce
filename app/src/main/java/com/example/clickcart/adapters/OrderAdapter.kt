@@ -13,7 +13,8 @@ import java.util.Locale
 
 class OrderAdapter(
     private val onReorderClick: (Order) -> Unit,
-    private val onReportIssueClick: (Order) -> Unit
+    private val onReportIssueClick: (Order) -> Unit,
+    private val onArrowClick: (Order) -> Unit
 ) : ListAdapter<Order, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
@@ -22,7 +23,7 @@ class OrderAdapter(
             parent,
             false
         )
-        return OrderViewHolder(binding, onReorderClick, onReportIssueClick)
+        return OrderViewHolder(binding, onReorderClick, onReportIssueClick, onArrowClick)
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
@@ -32,7 +33,8 @@ class OrderAdapter(
     class OrderViewHolder(
         private val binding: ItemOrderView1Binding,
         private val onReorderClick: (Order) -> Unit,
-        private val onReportIssueClick: (Order) -> Unit
+        private val onReportIssueClick: (Order) -> Unit,
+        private val onArrowClick: (Order) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n", "DefaultLocale")
@@ -42,7 +44,7 @@ class OrderAdapter(
                 orderDateValueTextView.text = formatDate(order.createdAt.toString())
                 itemsValueTextView.text = order.items.sumOf { it.quantity }.toString()
                 totalPriceValueTextView.text = String.format("$%.2f", order.totalOrderPrice)
-                statusValueTextView.text = order.status
+                statusValueTextView.text = order.orderStatus
 
                 reportIssueButton.setOnClickListener {
                     onReportIssueClick(order)
@@ -50,6 +52,10 @@ class OrderAdapter(
 
                 reorderButton.setOnClickListener {
                     onReorderClick(order)
+                }
+
+                arrowImageView.setOnClickListener {
+                    onArrowClick(order)
                 }
             }
         }
