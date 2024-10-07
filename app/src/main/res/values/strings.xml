@@ -74,6 +74,7 @@
     <string name="edit_profile_change_password_and_more">Edit profile, change password, and more</string>
     <string name="settings_amp_support"><![CDATA[Settings & Support]]></string>
     <string name="app_settings_about_us_and_contact_support">App settings, about us, and contact support</string>
+    <string name="price_format">$%.2f</string>
     <string name="name">Name</string>
     <string name="your_name">Your Name</string>
     <string name="your_email_gmail_com">Youremail@gmail.com</string>
