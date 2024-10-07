@@ -3,6 +3,7 @@ package com.example.clickcart.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.os.UserManager
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ import com.example.clickcart.api.UserApiService
 import com.example.clickcart.data.UserResponse
 import com.example.clickcart.models.OrderStatus
 import com.example.clickcart.models.Order
+import com.example.clickcart.utils.TokenManager
 
 class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
     private var _binding: FragmentCartBinding? = null
@@ -100,7 +102,7 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, homeFragment)
-            .addToBackStack(null) 
+            .addToBackStack(null)
             .commit()
     }
 
@@ -168,19 +170,21 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
         val orderItems = cartItems.map { cartItem ->
             OrderItem(
                 productId = cartItem.productId,
-                productName = cartItem.productName,
+//                productName = cartItem.productName,
                 quantity = cartItem.quantity,
                 price = cartItem.productPrice,
                 totalPrice = cartItem.productPrice * cartItem.quantity,
-                status = OrderItemStatus.PENDING
+//                status = OrderItemStatus.PENDING
             )
         }
 
         val totalPrice = orderItems.sumOf { it.totalPrice }
         var username = "";
         var uid = "";
-        fun fetchUserDetails(userId: String) {
+//        var userId: String? = null
+        val userId = TokenManager.getUserId()
             val service = RetrofitClient.create().create(UserApiService::class.java)
+        if (userId != null) {
             service.getUserDetails(userId).enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     if (response.isSuccessful) {
@@ -196,40 +200,46 @@ class Cart : Fragment(), CartAdapter.OnQuantityChangeListener {
                 }
 
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Network error getUserDetails: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
 
-        val order = Order(
-            customerId = uid,
-            customerName = username,
-            orderItems = orderItems,
-            status = OrderStatus.PENDING,
-            totalPrice = totalPrice
-        )
 
+        val order = Order(
+            customerId = userId.toString(),
+//            customerName = username,
+            items = orderItems,
+            status = OrderStatus.PENDING.toString(),
+            totalOrderPrice = totalPrice
+        )
+        Log.e("OrderApiService", "Order object: $order")
         val orderApiService = RetrofitClient.create().create(OrderApiService::class.java)
         orderApiService.createOrder(order).enqueue(object : Callback<Order> {
             override fun onResponse(call: Call<Order>, response: Response<Order>) {
                 if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Log.d("OrderApiService", "Response Body: $responseBody")
+
                     // Order created successfully
                     clearCart()
                     Toast.makeText(context, "Order placed successfully", Toast.LENGTH_SHORT).show()
 
-                    // Navigate to the Home screen using an Intent
+                    // Navigate to the Home screen
                     val intent = Intent(requireActivity(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                 } else {
-                    // Handle error
+                    // Log the error response body for debugging
+                    Log.e("OrderApiService", "Error Response: ${response.errorBody()?.string()}")
                     Toast.makeText(context, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
                 }
             }
 
+
             override fun onFailure(call: Call<Order>, t: Throwable) {
-                // Handle network error
-                Toast.makeText(context, "Network error. Please check your connection and try again.", Toast.LENGTH_SHORT).show()
+                Log.e("OrderApiService", "Network error: ${t.message}", t)
+                Toast.makeText(context, "Network error: ${t.message}. Please check your connection and try again.", Toast.LENGTH_SHORT).show()
             }
         })
     }
