@@ -77,7 +77,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        productAdapter = ProductAdapter()
+        productAdapter = ProductAdapter(this) // Pass 'this' as lifecycleOwner since Activity is a LifecycleOwner
         productsRecyclerView.apply {
             adapter = productAdapter
             layoutManager = GridLayoutManager(this@SearchActivity, 2)
