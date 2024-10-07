@@ -44,7 +44,7 @@ class Home : Fragment() {
         categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         productsRecyclerView = view.findViewById(R.id.featuredProductsRecyclerView)
-        productAdapter = ProductAdapter()
+        productAdapter = ProductAdapter(this)
         productsRecyclerView.adapter = productAdapter
         productsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 

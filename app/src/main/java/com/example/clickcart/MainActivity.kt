@@ -1,7 +1,6 @@
 package com.example.clickcart
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,14 +20,16 @@ class MainActivity : AppCompatActivity() {
         // Initialize TokenManager
         TokenManager.init(this)
 
-        // Check if user is logged in
+        // Check if user is logged in and account is active
         val token = TokenManager.getToken()
+        val isActive = TokenManager.getIsActive()
 
         if (token == null) {
             // Redirect to LoginActivity if token is missing
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            redirectToLogin()
+        } else if (!isActive) {
+            // Redirect to AccountStatusActivity if account is not active
+            redirectToAccountStatus()
         } else {
             // Continue loading the HomeFragment
             if (savedInstanceState == null) {
@@ -36,32 +37,45 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.fragment_container, Home())
                     .commit()
             }
-            if (intent.getBooleanExtra("SHOW_HOME", false)) {
-                showHomeFragment()
-            }
 
             // Set up bottom navigation
-            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-            bottomNavigationView.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.home -> {
-                        replaceFragment(Home())
-                        true
-                    }
-                    R.id.wishlist -> {
-                        replaceFragment(Cart())
-                        true
-                    }
-                    R.id.order -> {
-                        replaceFragment(Order())
-                        true
-                    }
-                    R.id.account -> {
-                        replaceFragment(Account())
-                        true
-                    }
-                    else -> false
+            setupBottomNavigation()
+        }
+    }
+
+    private fun redirectToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun redirectToAccountStatus() {
+        val intent = Intent(this, AccountStatusActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setupBottomNavigation() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> {
+                    replaceFragment(Home())
+                    true
                 }
+                R.id.wishlist -> {
+                    replaceFragment(Cart())
+                    true
+                }
+                R.id.order -> {
+                    replaceFragment(Order())
+                    true
+                }
+                R.id.account -> {
+                    replaceFragment(Account())
+                    true
+                }
+                else -> false
             }
         }
     }
@@ -71,11 +85,4 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
-
-    private fun showHomeFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, Home())
-            .commit()
-    }
 }
-

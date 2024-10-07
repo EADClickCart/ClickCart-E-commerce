@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Detail Product"
+            android:text="@string/detail_product"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -44,6 +44,7 @@
                 android:layout_height="300dp"
                 android:layout_margin="30dp"
                 android:background="@drawable/roundedbg_for_img"
+                android:contentDescription="@string/Image"
                 android:padding="25dp"
                 tools:srcCompat="@drawable/product_img" />
 
@@ -53,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="25dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginBottom="5dp"/>
 
             <TextView
@@ -63,7 +64,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/red_1"
-                android:layout_marginLeft="25dp" />
+                android:layout_marginStart="25dp" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -84,6 +85,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/Image"
                     android:scaleType="centerCrop"
                     android:src="@drawable/vendor_profile_img"/>
 
@@ -101,7 +103,7 @@
                         android:id="@+id/store_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Shop Larson Electronic"
+                        android:text="@string/vendor_name"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"/>
@@ -110,7 +112,14 @@
                         android:id="@+id/store_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Official Store"
+                        android:text="@string/official_store"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/darker_gray"/>
+                    <TextView
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/official_store"
                         android:textSize="14sp"
                         android:textColor="@android:color/darker_gray"/>
                 </LinearLayout>
@@ -121,6 +130,7 @@
                     android:layout_width="30dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/Image"
                     android:src="@drawable/forward_arrow"/> <!-- Replace with your arrow icon -->
 
             </LinearLayout>
@@ -138,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:layout_margin="25dp"
-                android:justificationMode="inter_word"/>
+                />
 
         </LinearLayout>
     </ScrollView>
@@ -160,7 +170,8 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:text="Add to Wishlist"
+            android:contentDescription="@string/Image"
+            android:text="@string/add_to_wishlist"
             android:src="@drawable/ic_menu_wishlist"
             android:background="@null"
             android:textColor="@android:color/white" />
