@@ -28,6 +28,7 @@ class Account : Fragment() {
     private lateinit var userNameTextView: TextView
     private lateinit var userEmailTextView: TextView
     private lateinit var manageAccountCard: CardView
+    private lateinit var deactivateAccountCard:CardView
     private var userId: String? = null
     private var userRole: String? = null
 
@@ -47,9 +48,12 @@ class Account : Fragment() {
         userEmailTextView = view.findViewById(R.id.userEmail)
         logoutButton = view.findViewById(R.id.signOutButton)
         manageAccountCard = view.findViewById(R.id.manageAccountCard)
+        deactivateAccountCard = view.findViewById(R.id.deactivateAccountCard)
+
 
         logoutButton.setOnClickListener { performLogout() }
         manageAccountCard.setOnClickListener { showEditProfileDialog() }
+        deactivateAccountCard.setOnClickListener { showProfileDeactivate() }
 
         if (userId != null) {
             fetchUserDetails(userId!!)
@@ -82,6 +86,40 @@ class Account : Fragment() {
         dialog.show()
     }
 
+
+    private fun showProfileDeactivate() {
+        try {
+            val dialog = Dialog(requireContext())
+            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_deactivate_account, null)
+            dialog.setContentView(dialogView)
+
+
+            val btnSave: Button? = dialogView.findViewById(R.id.deactivateBtn)
+            val cancelBtn: Button? = dialogView.findViewById(R.id.cancelBtn)
+
+            // Check if the button exists in the layout
+            if (btnSave == null) {
+                Toast.makeText(requireContext(), "Button not found in dialog layout", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            btnSave.setOnClickListener {
+                deactivateProfile()
+                dialog.dismiss()
+            }
+
+            cancelBtn?.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Error opening dialog: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     private fun updateUserProfile(newName: String, newEmail: String) {
         val userId = TokenManager.getUserId() ?: return
         val userRole = TokenManager.getUserRole() ?: return
@@ -97,6 +135,28 @@ class Account : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show()
                     fetchUserDetails(userId) // Refresh user details
+                } else {
+                    Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun deactivateProfile() {
+        val userId = TokenManager.getUserId() ?: return
+
+        val service = RetrofitClient.create().create(UserApiService::class.java)
+
+        service.deactivateUser(userId).enqueue(object : Callback<Unit> {
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Profile Deactivated", Toast.LENGTH_SHORT).show()
+                    performLogout()
                 } else {
                     Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
                 }
