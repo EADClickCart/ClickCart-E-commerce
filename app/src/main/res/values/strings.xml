@@ -89,4 +89,10 @@
     <string name="official_store">Official Store</string>
     <string name="add_to_wishlist">Add to Wishlist</string>
     <string name="add_to_cart">Add to Cart</string>
+    <string name="cancel">Cancel</string>
+    <string name="deactivate">Deactivate</string>
+    <string name="deactivate_account">Deactivate Account</string>
+    <string name="no_products_available">No products available</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="desc_deactivate">This will deactivate your account and cannot be reactivated. It can only be reactivated by a customer service representative (CSR).</string>
 </resources>

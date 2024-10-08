@@ -13,10 +13,13 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.example.clickcart.adapters.ProductAdapter
 import com.example.clickcart.api.ProductApiService
 import com.example.clickcart.api.RetrofitClient
+import com.example.clickcart.data.VendorDataManager
 import com.example.clickcart.models.Product
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var priceSort: TextView
     private lateinit var ratingSortIcon: ImageView
     private lateinit var priceSortIcon: ImageView
+    private lateinit var noProductAvailable: TextView
+
 
     private var allProducts: List<Product> = listOf()
     private var currentSearchText: String = ""
@@ -74,10 +79,12 @@ class SearchActivity : AppCompatActivity() {
         ratingSortIcon = findViewById(R.id.rating_short_icon)
         priceSortIcon = findViewById(R.id.price_short_icon)
         productsRecyclerView = findViewById(R.id.recyclerView)
+        noProductAvailable = findViewById(R.id.noProductAvailable)
+
     }
 
     private fun setupRecyclerView() {
-        productAdapter = ProductAdapter(this) // Pass 'this' as lifecycleOwner since Activity is a LifecycleOwner
+        productAdapter = ProductAdapter(this) // 'this' is now correct as it's passed as a LifecycleOwner
         productsRecyclerView.apply {
             adapter = productAdapter
             layoutManager = GridLayoutManager(this@SearchActivity, 2)
@@ -118,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
                 SortOrder.ASCENDING -> SortOrder.DESCENDING
                 SortOrder.DESCENDING -> SortOrder.NONE
             }
-            ratingOrder = SortOrder.NONE
+            //ratingOrder = SortOrder.NONE
             updateSortUI()
             filterAndSortProducts()
         }
@@ -129,7 +136,7 @@ class SearchActivity : AppCompatActivity() {
                 SortOrder.ASCENDING -> SortOrder.DESCENDING
                 SortOrder.DESCENDING -> SortOrder.NONE
             }
-            priceOrder = SortOrder.NONE
+            //priceOrder = SortOrder.NONE
             updateSortUI()
             filterAndSortProducts()
         }
@@ -158,32 +165,65 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun filterAndSortProducts() {
-        var filteredProducts = allProducts.filter { product ->
-            when (currentFilter) {
-                FilterType.NAME -> product.name.contains(currentSearchText, ignoreCase = true)
-                //FilterType.VENDOR -> product.vendor?.contains(currentSearchText, ignoreCase = true) ?: false
-                else -> {// No filtering needed
-                    true
+        lifecycleScope.launch {
+            var filteredProducts = allProducts.filter { product ->
+                when (currentFilter) {
+                    FilterType.NAME -> product.name.contains(currentSearchText, ignoreCase = true)
+                    FilterType.VENDOR -> product.vendorName?.contains(currentSearchText, ignoreCase = true) ?: false
                 }
             }
+
+            // Apply both sorts if needed
+            filteredProducts = when {
+                // Both price and rating are active
+                priceOrder != SortOrder.NONE && ratingOrder != SortOrder.NONE -> {
+                    filteredProducts.sortedWith(
+                        compareBy<Product> {
+                            when (priceOrder) {
+                                SortOrder.ASCENDING -> it.price
+                                SortOrder.DESCENDING -> -it.price
+                                SortOrder.NONE -> 0.0
+                            }
+                        }.thenBy {
+                            when (ratingOrder) {
+                                SortOrder.ASCENDING -> it.rating ?: 0.0
+                                SortOrder.DESCENDING -> -(it.rating ?: 0.0)
+                                SortOrder.NONE -> 0.0
+                            }
+                        }
+                    )
+                }
+                // Only price sort is active
+                priceOrder != SortOrder.NONE -> {
+                    when (priceOrder) {
+                        SortOrder.ASCENDING -> filteredProducts.sortedBy { it.price }
+                        SortOrder.DESCENDING -> filteredProducts.sortedByDescending { it.price }
+                        SortOrder.NONE -> filteredProducts
+                    }
+                }
+                // Only rating sort is active
+                ratingOrder != SortOrder.NONE -> {
+                    when (ratingOrder) {
+                        SortOrder.ASCENDING -> filteredProducts.sortedBy { it.rating ?: 0.0 }
+                        SortOrder.DESCENDING -> filteredProducts.sortedByDescending { it.rating ?: 0.0 }
+                        SortOrder.NONE -> filteredProducts
+                    }
+                }
+                // No sorting needed
+                else -> filteredProducts
+            }
+
+            // Update UI visibility
+            if (filteredProducts.isEmpty()) {
+                noProductAvailable.visibility = TextView.VISIBLE
+            } else {
+                noProductAvailable.visibility = TextView.GONE
+            }
+
+            productAdapter.updateProducts(filteredProducts)
         }
-
-        // Sort by price
-        when (priceOrder) {
-            SortOrder.ASCENDING -> filteredProducts = filteredProducts.sortedBy { it.price }
-            SortOrder.DESCENDING -> filteredProducts = filteredProducts.sortedByDescending { it.price }
-            SortOrder.NONE -> { /* No sorting needed */ }
-        }
-
-        // Sort by rating
-//        when (ratingOrder) {
-//            SortOrder.ASCENDING -> filteredProducts = filteredProducts.sortedBy { it.rating }
-//            SortOrder.DESCENDING -> filteredProducts = filteredProducts.sortedByDescending { it.rating }
-//            SortOrder.NONE -> { /* No sorting needed */ }
-//        }
-
-        productAdapter.updateProducts(filteredProducts)
     }
+
 
     private fun fetchProducts() {
         val retrofit = RetrofitClient.create()
@@ -195,7 +235,10 @@ class SearchActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { products ->
                         allProducts = products
-                        filterAndSortProducts()
+                        lifecycleScope.launch {
+                            fetchVendorDetailsAndRatings()
+                            filterAndSortProducts()
+                        }
                     }
                 } else {
                     Toast.makeText(this@SearchActivity, "Error fetching products", Toast.LENGTH_SHORT).show()
@@ -206,5 +249,20 @@ class SearchActivity : AppCompatActivity() {
                 Toast.makeText(this@SearchActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private suspend fun fetchVendorDetailsAndRatings() {
+        allProducts.forEach { product ->
+            try {
+                val vendor = VendorDataManager.getVendorDetails(product.vendorId)
+                product.vendorName = vendor.name
+
+                val vendorRating = VendorDataManager.getVendorRating(product.vendorId)
+                product.rating = vendorRating
+            } catch (e: Exception) {
+                product.vendorName = "Unknown Vendor"
+                product.rating = null
+            }
+        }
     }
 }

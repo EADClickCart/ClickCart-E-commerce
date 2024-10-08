@@ -23,4 +23,7 @@ interface UserApiService {
 
     @PUT("api/User/{id}/update")
     fun updateUserDetails(@Path("id") userId: String, @Body updateBody: Map<String, String>): Call<Unit>
+
+    @PUT("api/User/{id}/deactivate")
+    fun deactivateUser(@Path("id") userId: String): Call<Unit>
 }

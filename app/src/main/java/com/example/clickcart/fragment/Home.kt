@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clickcart.ProductDetailActivity
@@ -18,8 +19,10 @@ import com.example.clickcart.adapters.ProductAdapter
 import com.example.clickcart.api.CategoryApiService
 import com.example.clickcart.api.ProductApiService
 import com.example.clickcart.api.RetrofitClient
+import com.example.clickcart.data.VendorDataManager
 import com.example.clickcart.models.Category
 import com.example.clickcart.models.Product
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,13 +47,14 @@ class Home : Fragment() {
         categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         productsRecyclerView = view.findViewById(R.id.featuredProductsRecyclerView)
-        productAdapter = ProductAdapter(this)
+        productAdapter = ProductAdapter(viewLifecycleOwner)
         productsRecyclerView.adapter = productAdapter
         productsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         productAdapter.setOnItemClickListener { product ->
-            val intent = Intent(requireContext(), ProductDetailActivity::class.java)
-            intent.putExtra("PRODUCT", product)
+            val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                putExtra("PRODUCT", product)
+            }
             startActivity(intent)
         }
 
@@ -97,7 +101,10 @@ class Home : Fragment() {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { products ->
-                        productAdapter.updateProducts(products)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val updatedProducts = fetchVendorDetailsAndRatings(products)
+                            productAdapter.updateProducts(updatedProducts)
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), "Error fetching products", Toast.LENGTH_SHORT).show()
@@ -109,6 +116,25 @@ class Home : Fragment() {
                 Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private suspend fun fetchVendorDetailsAndRatings(products: List<Product>): List<Product> {
+        return products.map { product ->
+            try {
+                val vendor = VendorDataManager.getVendorDetails(product.vendorId)
+                product.vendorName = vendor.name
+
+                val vendorRating = VendorDataManager.getVendorRating(product.vendorId)
+                product.rating = vendorRating
+
+                product
+            } catch (e: Exception) {
+                product.apply {
+                    vendorName = "Unknown Vendor"
+                    rating = null
+                }
+            }
+        }
     }
 
     private fun openSearchScreen() {

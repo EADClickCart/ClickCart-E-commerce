@@ -11,5 +11,7 @@ data class Product(
     val isActive: Boolean,
     val vendorId: String,
     val isLowStock: Boolean,
-    val lastUpdated: String
+    val lastUpdated: String,
+    var vendorName: String? = null,
+    var rating: Double? = null
 ): Serializable
