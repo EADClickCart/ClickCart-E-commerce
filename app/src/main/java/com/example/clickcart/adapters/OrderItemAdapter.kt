@@ -1,5 +1,6 @@
 package com.example.clickcart.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -24,10 +25,11 @@ class OrderItemAdapter : ListAdapter<OrderItem, OrderItemAdapter.OrderItemViewHo
     }
 
     class OrderItemViewHolder(private val binding: ItemOrderView2CardBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n", "DefaultLocale")
         fun bind(orderItem: OrderItem) {
             binding.apply {
                 productName.text = orderItem.productName
-                productQuantity.text = "Quantity: ${orderItem.quantity}"
+                productQuantity.text = "Qt: ${orderItem.quantity}"
                 productPrice.text = String.format("$%.2f", orderItem.price)
             }
         }
