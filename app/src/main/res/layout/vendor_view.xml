@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Vendor"
+            android:text="@string/vendor"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -37,6 +37,7 @@
             android:id="@+id/shopImage"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:contentDescription="@string/Image"
             android:src="@drawable/vendor_profile_img" />
 
         <LinearLayout
@@ -50,7 +51,7 @@
                 android:id="@+id/shopName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shop Larson Electronic"
+                android:text="@string/vendor_name"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -58,7 +59,7 @@
                 android:id="@+id/officialStore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Official Store"
+                android:text="@string/official_store"
                 android:textColor="#1E88E5" />
         </LinearLayout>
 
@@ -67,14 +68,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="4dp"
-            android:text="4.6"
-            android:textColor="#FFC120" />
+            android:textStyle="bold"
+            android:text="@string/sample_number"
+             />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
+        android:baselineAligned="false"
         android:padding="16dp">
 
         <LinearLayout
@@ -86,7 +89,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="followers"
+                android:text="@string/followers"
                 android:textColor="#757575" />
 
             <TextView
@@ -106,14 +109,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Products"
+                android:text="@string/products"
                 android:textColor="#757575" />
 
             <TextView
                 android:id="@+id/productCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5"
+                android:text="@string/sample_num_2"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -126,7 +129,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Joined"
+                android:text="@string/joined"
                 android:textColor="#757575" />
 
             <TextView
@@ -143,7 +146,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:padding="16dp"
-        android:text="Reviews for seller"
+        android:text="@string/reviews_for_seller"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -169,16 +172,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-<!--            <ImageView-->
-<!--                android:layout_width="100dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                android:src="@drawable/ic_no_reviews" />-->
+            <!--            <ImageView-->
+            <!--                android:layout_width="100dp"-->
+            <!--                android:layout_height="100dp"-->
+            <!--                android:src="@drawable/ic_no_reviews" />-->
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="No Reviews Yet"
+                android:text="@string/no_reviews_yet"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -186,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="This seller hasn't received any reviews yet"
+                android:text="@string/no_review_txt"
                 android:textColor="#757575" />
 
         </LinearLayout>

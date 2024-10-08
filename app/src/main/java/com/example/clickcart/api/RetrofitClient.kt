@@ -10,6 +10,7 @@ import java.io.IOException
 
 object RetrofitClient {
 
+    //private const val BASE_URL = "http://192.168.1.100:8888"
     private const val BASE_URL = "http://10.0.2.2:5296/"
 
     fun create(): Retrofit {

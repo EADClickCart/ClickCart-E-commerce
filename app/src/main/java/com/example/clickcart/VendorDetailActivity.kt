@@ -3,6 +3,7 @@ package com.example.clickcart
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,13 @@ class VendorDetailActivity : AppCompatActivity() {
         observeViewModel()
 
         val vendorId = intent.getStringExtra("VENDOR_ID") ?: return
+        val vendorName = intent.getStringExtra("VENDOR_NAME") ?: "Unknown Vendor"
+        val vendorRating = intent.getStringExtra("VENDOR_RATING") ?: "0.0"
+
+        // Set vendor name and rating
+        findViewById<TextView>(R.id.shopName).text = vendorName
+        findViewById<TextView>(R.id.ratingText).text = vendorRating
+
         fetchVendorReviews(vendorId)
     }
 

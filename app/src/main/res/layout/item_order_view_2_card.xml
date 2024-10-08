@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="@string/vendor_name"
+            android:text="@string/amalgam"
             android:textColor="@color/gray"
             android:textStyle="bold"
             android:textSize="14sp"

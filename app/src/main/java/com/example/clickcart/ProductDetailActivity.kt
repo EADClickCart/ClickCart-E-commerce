@@ -1,5 +1,6 @@
 package com.example.clickcart
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -52,6 +53,7 @@ class ProductDetailActivity : AppCompatActivity() {
         setupArrowIconClick()  // Set up the click event for arrowIcon
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initializeViews() {
         // Existing views
         val productNameDetail: TextView = findViewById(R.id.productNameDetail)
@@ -81,11 +83,16 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun setupArrowIconClick() {
         arrowIcon.setOnClickListener {
             val intent = Intent(this, VendorDetailActivity::class.java)
-            intent.putExtra("VENDOR_ID", product.vendorId) // Pass the vendor ID to the new activity
+            intent.apply {
+                putExtra("VENDOR_ID", product.vendorId)
+                putExtra("VENDOR_NAME", product.vendorName) // Assuming you have vendorName in your product model
+                putExtra("VENDOR_RATING", product.rating?.toString() ?: "0.0") // Assuming vendorRating is a number
+            }
             startActivity(intent)
         }
     }
 
+    @SuppressLint("DefaultLocale", "SetTextI18n")
     private fun loadVendorDetails() {
         lifecycleScope.launch {
             try {
@@ -108,7 +115,9 @@ class ProductDetailActivity : AppCompatActivity() {
                 productId = product.id,
                 productName = product.name,
                 productPrice = product.price,
-                quantity = 1
+                quantity = 1,
+                vendorId = product.vendorId,
+                vendorName = vendorName.text.toString()
             )
             addToCart(cartItem)
             Toast.makeText(this, "${product.name} added to cart", Toast.LENGTH_SHORT).show()
@@ -116,6 +125,6 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun addToCart(cartItem: CartItem) {
-        Cart.addToCart(cartItem)
+        Cart.addToCart(cartItem,this)
     }
 }

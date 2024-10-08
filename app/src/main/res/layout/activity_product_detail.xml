@@ -46,7 +46,7 @@
                 android:background="@drawable/roundedbg_for_img"
                 android:contentDescription="@string/Image"
                 android:padding="25dp"
-                tools:srcCompat="@drawable/product_img" />
+                tools:srcCompat="@drawable/product_img_2" />
 
             <TextView
                 android:id="@+id/productNameDetail"
@@ -182,7 +182,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add to Cart"
+            android:text="@string/add_to_cart"
             android:backgroundTint="@color/red_1"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp" />
