@@ -1,13 +1,15 @@
 package com.example.clickcart.models
 
-import java.util.Date
-
 data class Order(
-    val _id: String? = null,
+    val id: String? = null,
     val customerId: String,
-    val customerName: String,
-    val orderItems: List<OrderItem>,
-    val status: OrderStatus,
-    val orderDate: Date = Date(),
-    val totalPrice: Double
+    val items: List<OrderItem>,
+    val orderStatus: String,
+    val createdAt: String? = null,
+    val note: String? = null,
+    val isPartiallyDelivered: Boolean = false,
+    val vendorStatuses: List<String> = emptyList(),
+    val totalOrderPrice: Double,
+    val vendorId: String? = null
 )
+
