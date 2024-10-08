@@ -1,5 +1,6 @@
 package com.example.clickcart
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
@@ -22,6 +23,7 @@ class ProductDetailActivity : AppCompatActivity() {
     private lateinit var vendorName: TextView
     private lateinit var vendorId: TextView
     private lateinit var vendorRating: TextView
+    private lateinit var arrowIcon: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +49,7 @@ class ProductDetailActivity : AppCompatActivity() {
         initializeViews()
         setupAddToCartButton()
         loadVendorDetails()
+        setupArrowIconClick()  // Set up the click event for arrowIcon
     }
 
     private fun initializeViews() {
@@ -60,7 +63,8 @@ class ProductDetailActivity : AppCompatActivity() {
         // New vendor-related views
         vendorName = findViewById(R.id.store_name)
         vendorId = findViewById(R.id.store_status)
-        vendorRating = findViewById(R.id.rating)  // Initialize this line
+        vendorRating = findViewById(R.id.rating)
+        arrowIcon = findViewById(R.id.arrow_icon) // Initialize arrowIcon
 
         // Set the product details
         productNameDetail.text = product.name
@@ -71,7 +75,15 @@ class ProductDetailActivity : AppCompatActivity() {
         // Initialize vendor views with loading state
         vendorName.text = "Loading..."
         vendorId.text = product.vendorId
-        vendorRating.text = "..."  // This will now work correctly
+        vendorRating.text = "..."
+    }
+
+    private fun setupArrowIconClick() {
+        arrowIcon.setOnClickListener {
+            val intent = Intent(this, VendorDetailActivity::class.java)
+            intent.putExtra("VENDOR_ID", product.vendorId) // Pass the vendor ID to the new activity
+            startActivity(intent)
+        }
     }
 
     private fun loadVendorDetails() {
